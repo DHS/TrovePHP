@@ -1,22 +1,20 @@
 Examples:
 
-// Auth.php
-$trove = new Trove($consmerKey, $consumerSecret);
+// Authentication
+$trove = new Trove($client_id, $client_secret, $callback_url)
 $authUrl = $trove->buildAuthUrl();
-// This does not have to be in the session, but it does require a level of persistence. It will be used on the page where you accept the token
-$_SESSION['secret'] = $trove->tokenSecret();
+echo ($authUrl);
 
+// Redirect users to the authUrl.  The bounceback will return a code, that you then have to turn into an accesstoken
+$trove = new Trove($client_id, $client_secret, $callback_url)
+$trove_access_token = getAccessToken($code) // $code is from the bounceback url
+// Save $trove_access_token and to reuse the token later:
+$trove = new Trove($client_id, $client_secret, $callback_url, $trove_access_token)
 
-// Accept.php
-$trove = new Trove($consmerKey, $consumerSecret);
-if($trove->acceptToken($_SESSION['secret'])) {
-	// These would be saved in the database, tied to the user currently attempting authentication
-	$_SESSION['token'] = $trove->token();
-	$_SESSION['secret'] = $trove->tokenSecret();
-}
+// Some sample method calls
 
-// ViewUser.php
-$trove = new Trove($consmerKey, $consumerSecret, $_SESSION['token'], $_SESSION['token_secret']);
-// Note: trove requires a trailing slash on these requests. In the future I want to have it auto detected, and appended if forgotten
-// Because when missed, you get a confusing 301 redirect which I currently do not tell curl to follow
-$user = json_decode($trove->get('user/'), true);
+print_r($trove->getUserInformation());
+print_r($trove->getPhotos());
+print_r($trove->getCheckins());
+print_r($trove->getStatus());
+print_r($trove->getPhotos(array('services'=>'facebook', 'page'=>'2')));
