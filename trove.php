@@ -27,9 +27,10 @@ class Trove {
 	public $scope;
 	public $accessToken;
 	
-	private static $rootUrl = 'https://api.yourtrove.com/v2/';
-	private static $authenticateUrl = 'https://www.yourtrove.com/oauth2/authenticate/';
-	private static $authorizeUrl = 'https://www.yourtrove.com/oauth2/access_token';
+	private static $rootUrl			= 'https://api.yourtrove.com/v2/';
+	private static $authenticateUrl	= 'https://www.yourtrove.com/oauth2/authenticate/';
+	private static $authorizeUrl	= 'https://www.yourtrove.com/oauth2/access_token';
+
 	const VERSION = '2.0';
 	
 	/**
@@ -41,13 +42,13 @@ class Trove {
 	 * @param string $scope Optional, a list of content types you want.  Default is array('photos')
 	 * @param string $accessToken Optional, if you already have this authenticated 
 	 */
-	public function __construct($clientId, $clientSecret, $redirectUri, $accessToken = null,$scope = array('photos')) {
+	public function __construct($clientId, $clientSecret, $redirectUri, $accessToken = null, $scope = array('photos')) {
 		
-		$this->clientId = $clientId;
-		$this->clientSecret = $clientSecret;
-		$this->redirectUri = $redirectUri;
-		$this->scope = $scope;
-		$this->accessToken = $accessToken;
+		$this->clientId		= $clientId;
+		$this->clientSecret	= $clientSecret;
+		$this->redirectUri	= $redirectUri;
+		$this->scope		= $scope;
+		$this->accessToken	= $accessToken;
 		
 	}
 	
@@ -59,9 +60,9 @@ class Trove {
 	 */
 	public function buildAuthURL() {
 		
-		$params['client_id'] = $this->clientId;
-		$params['response_type'] = 'code';
-		$params['redirect_uri'] = $this->redirectUri;
+		$params['client_id']		= $this->clientId;
+		$params['response_type']	= 'code';
+		$params['redirect_uri']		= $this->redirectUri;
 		
 		return HttpUtil::createGetUrl(self::$authenticateUrl, $params);   
 		
