@@ -21,17 +21,16 @@
  */
 class Trove {
 	
-    public $clientId;
+	public $clientId;
 	public $clientSecret;
 	public $redirectUri;
 	public $scope;
 	public $accessToken;
 	
 	private static $rootUrl = 'https://api.yourtrove.com/v2/';
-    private static $authenticateUrl = 'https://www.yourtrove.com/oauth2/authenticate/';
+	private static $authenticateUrl = 'https://www.yourtrove.com/oauth2/authenticate/';
 	private static $authorizeUrl = 'https://www.yourtrove.com/oauth2/access_token';
 	const VERSION = '2.0';
-	
 	
 	/**
 	 * Consumer Key and Consumer Secret are required here. These are your oauth credentials
@@ -40,14 +39,16 @@ class Trove {
 	 * @param string $clientSecret Required, contains the oauth consumer secret
 	 * @param string $redirectUri Required, contains the redirectURI for your app specified in YourTrove
 	 * @param string $scope Optional, a list of content types you want.  Default is array('photos')
-     * @param string $accessToken Optional, if you already have this authenticated     
+	 * @param string $accessToken Optional, if you already have this authenticated 
 	 */
 	public function __construct($clientId, $clientSecret, $redirectUri, $accessToken = null,$scope = array('photos')) {
+		
 		$this->clientId = $clientId;
 		$this->clientSecret = $clientSecret;
 		$this->redirectUri = $redirectUri;
 		$this->scope = $scope;
 		$this->accessToken = $accessToken;
+		
 	}
 	
 	/**
@@ -57,34 +58,36 @@ class Trove {
 	 * @return string Url that the user should be redirected to.
 	 */
 	public function buildAuthURL() {
-	    $params['client_id'] = $this->clientId;
-	    $params['response_type'] = 'code';
-	    $params['redirect_uri'] = $this->redirectUri;
-	    
-	    
-	    return HttpUtil::createGetUrl(self::$authenticateUrl, $params);   
+		
+		$params['client_id'] = $this->clientId;
+		$params['response_type'] = 'code';
+		$params['redirect_uri'] = $this->redirectUri;
+		
+		return HttpUtil::createGetUrl(self::$authenticateUrl, $params);   
+		
 	}
 	
 	public function getAccessToken($codeToken) {
-		$params['client_id'] = $this->clientId;
-	    $params['grant_type'] = 'authorization_code';
-	    $params['redirect_uri'] = $this->redirectUri;
-	    $params['client_secret'] = $this->clientSecret;
-	    $params['code'] = $codeToken;
-	    
-	    $response = HttpUtil::httpRequest('GET', self::$authorizeUrl, $params);
-	    $data = json_decode($response);
-
+		
+		$params['client_id']		= $this->clientId;
+		$params['grant_type']		= 'authorization_code';
+		$params['redirect_uri']		= $this->redirectUri;
+		$params['client_secret']	= $this->clientSecret;
+		$params['code']				= $codeToken;
+		
+		$response = HttpUtil::httpRequest('GET', self::$authorizeUrl, $params);
+		$data = json_decode($response);
 		$this->accessToken = $data->{'access_token'};
-	    
+		
 	}
 	
-	
-	
 	function post($url, $params = array()) {
+		
 		$url = self::$rootUrl . $url;
 		$params = $this->buildRequest("POST", $url, $params);
+		
 		return HttpUtil::httpRequest("POST", $url, $params);
+		
 	}
 	
 	/**
@@ -95,9 +98,12 @@ class Trove {
 	 * @return the body of the http response
 	 */
 	function get($url, $params = array()) {
+		
 		$url = self::$rootUrl . $url;
 		$params = $this->buildRequest("GET", $url, $params);
+		
 		return HttpUtil::httpRequest("GET", $url, $params);
+		
 	}
 	
 	/**
@@ -107,52 +113,60 @@ class Trove {
 	 * @return string the cleaned data
 	 */
 	protected static function clean($data) {
+		
 		$data = utf8_encode($data);
 		$data = rawurlencode($data);
 		//cheating and un-doing the non-rfc compliant encoding
 		//TODO: Do this the right way?
 		return str_replace('+',' ', str_replace('%7E', '~', $data));
+		
 	}
 	
-	public function getUserInformation()
-	{
-	    if ($this->accessToken == null) {
-	        throw new AccessTokenRequiredException();
-	    }
-	    $params['access_token'] = $this->accessToken;
-	    $response = HttpUtil::httpRequest('GET', self::$rootUrl."/user/", $params);
-	    $user = json_decode($response, true);
-	    return $user;
+	public function getUserInformation() {
+		
+		if ($this->accessToken == null) {
+			throw new AccessTokenRequiredException();
+		}
+		
+		$params['access_token'] = $this->accessToken;
+		$response = HttpUtil::httpRequest('GET', self::$rootUrl."/user/", $params);
+		$user = json_decode($response, true);
+		
+		return $user;
+		
 	}
 	
 	private function getContent($type, $query) {
-	    if ($this->accessToken == null) {
-	        throw new AccessTokenRequiredException();
-	    }
-	    $params['access_token'] = $this->accessToken;
-	    if ($query != null) {
-	        $params = array_merge($params, $query);
-	    }
-	    print_r($params);
-	    $response = HttpUtil::httpRequest('GET', self::$rootUrl."/content/". $type . "/", $params);
-	    $results = json_decode($response, true);
-	    return $results;
-	    
+		
+		if ($this->accessToken == null) {
+			throw new AccessTokenRequiredException();
+		}
+		
+		$params['access_token'] = $this->accessToken;
+		
+		if ($query != null) {
+			$params = array_merge($params, $query);
+		}
+		
+		print_r($params);
+		$response = HttpUtil::httpRequest('GET', self::$rootUrl."/content/". $type . "/", $params);
+		$results = json_decode($response, true);
+		return $results;
+		
 	}
-	public function getPhotos($query = null)
-	{
-        return $this->getContent("photos", $query);
-    }
-	public function getCheckins($query = null)
-	{
-        return $this->getContent("checkins", $query);
-    }
-	public function getStatus($query = null)
-	{
-        return $this->getContent("status", $query);
-    }
-
-    
+	
+	public function getPhotos($query = null) {
+		return $this->getContent("photos", $query);
+	}
+	
+	public function getCheckins($query = null) {
+		return $this->getContent("checkins", $query);
+	}
+	
+	public function getStatus($query = null) {
+		return $this->getContent("status", $query);
+	}
+	
 }
 
 class AccessTokenRequiredException extends Exception {}
@@ -165,17 +179,21 @@ class AccessTokenRequiredException extends Exception {}
  * @author Aaron Hedges <aaron@dashron.com>
  */
 class HttpUtil {
-    public static function createGetUrl($url, $params) {
-        if(isset($params)) {
-			if(strstr($url, '?')) {
+	
+	public static function createGetUrl($url, $params) {
+		
+		if (isset($params)) {
+			if (strstr($url, '?')) {
 				$url .= '&' . http_build_query($params);
-			}
-			else {
+			} else {
 				$url .= '?' . http_build_query($params);
 			}
 		}
+		
 		return $url;
-    }
+		
+	}
+	
 	/**
 	 * Posts the parameters to the provided url
 	 * 
@@ -185,38 +203,44 @@ class HttpUtil {
 	 * @return string the body of the http response.
 	 */
 	public static function httpRequest($method, $url, $params) {
+		
 		$curl = curl_init();
-        
-		if($method == "GET") {
-			if(isset($params)) {
-				if(strstr($url, '?')) {
+		
+		if ($method == "GET") {
+			
+			if (isset($params)) {
+				if (strstr($url, '?')) {
 					$url .= '&' . http_build_query($params);
-				}
-				else {
+				} else {
 					$url .= '?' . http_build_query($params);
 				}
 			}
-		} 
-		elseif ($method == "POST") {
+			
+		} elseif ($method == "POST") {
+			
 			$params = http_build_query($params);
 			curl_setopt($curl, CURLOPT_POST, 1);
 			curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
+			
 		}
+		
 		curl_setopt($curl, CURLOPT_URL, $url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 		
-        
 		$data = curl_exec($curl);
 		
-		if(curl_errno($curl)) {
+		if (curl_errno($curl)) {
 			$err = curl_error($curl);
 			curl_close($curl);
 			throw new Exception($err);
 		}
+		
 		$page = curl_getinfo($curl);
-		if($page['http_code']!=200) {	 
+		
+		if ($page['http_code']!=200) {	 
 			echo($data);
 		}
+		
 		curl_close($curl);
 		
 		return $data;
@@ -230,15 +254,19 @@ class HttpUtil {
 	 * @return array an array representation of query
 	 */
 	public static function parseQuery($query) {
+		
 		$query = rawurldecode($query);
 		$params = explode('&', $query);
-
+		
 		$paramArray = array();
 		
-		foreach($params as $param) {
+		foreach ($params as $param) {
 			$split = explode('=', $param);
 			$paramArray[$split[0]] = $split[1];
 		}
+		
 		return $paramArray;
+		
 	}
+	
 }
