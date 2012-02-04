@@ -72,6 +72,7 @@ class Trove {
 	 * Second step of OAuth2. Generate the access token.
 	 * 
 	 * @param string $codeToken Required, the code from the first stage of OAuth
+	 * @return string Shiny new access token
 	 */
 	public function getAccessToken($codeToken) {
 		
@@ -83,7 +84,9 @@ class Trove {
 		
 		$response = HttpUtil::httpRequest('GET', self::$authorizeUrl, $params);
 		$data = json_decode($response);
-		$this->accessToken = $data->{'access_token'};
+		$this->accessToken = $data->access_token;
+		
+		return $this->accessToken;
 		
 	}
 	
