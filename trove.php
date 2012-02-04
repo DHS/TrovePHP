@@ -176,7 +176,6 @@ class Trove {
 			$params = array_merge($params, $query);
 		}
 		
-		print_r($params);
 		$response = HttpUtil::httpRequest('GET', self::$rootUrl . '/content/' . $type . '/', $params);
 		$results = json_decode($response, true);
 		
