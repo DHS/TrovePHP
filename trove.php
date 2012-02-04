@@ -97,9 +97,9 @@ class Trove {
 	function post($url, $params = array()) {
 		
 		$url = self::$rootUrl . $url;
-		$params = $this->buildRequest("POST", $url, $params);
+		$params = $this->buildRequest('POST', $url, $params);
 		
-		return HttpUtil::httpRequest("POST", $url, $params);
+		return HttpUtil::httpRequest('POST', $url, $params);
 		
 	}
 	
@@ -113,9 +113,9 @@ class Trove {
 	function get($url, $params = array()) {
 		
 		$url = self::$rootUrl . $url;
-		$params = $this->buildRequest("GET", $url, $params);
+		$params = $this->buildRequest('GET', $url, $params);
 		
-		return HttpUtil::httpRequest("GET", $url, $params);
+		return HttpUtil::httpRequest('GET', $url, $params);
 		
 	}
 	
@@ -147,7 +147,7 @@ class Trove {
 		}
 		
 		$params['access_token'] = $this->accessToken;
-		$response = HttpUtil::httpRequest('GET', self::$rootUrl."/user/", $params);
+		$response = HttpUtil::httpRequest('GET', self::$rootUrl . '/user/', $params);
 		$user = json_decode($response, true);
 		
 		return $user;
@@ -174,7 +174,7 @@ class Trove {
 		}
 		
 		print_r($params);
-		$response = HttpUtil::httpRequest('GET', self::$rootUrl."/content/". $type . "/", $params);
+		$response = HttpUtil::httpRequest('GET', self::$rootUrl . '/content/' . $type . '/', $params);
 		$results = json_decode($response, true);
 		return $results;
 		
@@ -187,7 +187,7 @@ class Trove {
 	 * @return array An array of photo data
 	 */
 	public function getPhotos($query = null) {
-		return $this->getContent("photos", $query);
+		return $this->getContent('photos', $query);
 	}
 	
 	/**
@@ -197,7 +197,7 @@ class Trove {
 	 * @return array An array of checkin data
 	 */
 	public function getCheckins($query = null) {
-		return $this->getContent("checkins", $query);
+		return $this->getContent('checkins', $query);
 	}
 	
 	/**
@@ -207,7 +207,7 @@ class Trove {
 	 * @return array An array of photo data
 	 */
 	public function getStatus($query = null) {
-		return $this->getContent("status", $query);
+		return $this->getContent('status', $query);
 	}
 	
 }
@@ -256,7 +256,7 @@ class HttpUtil {
 		
 		$curl = curl_init();
 		
-		if ($method == "GET") {
+		if ($method == 'GET') {
 			
 			if (isset($params)) {
 				if (strstr($url, '?')) {
@@ -266,7 +266,7 @@ class HttpUtil {
 				}
 			}
 			
-		} elseif ($method == "POST") {
+		} elseif ($method == 'POST') {
 			
 			$params = http_build_query($params);
 			curl_setopt($curl, CURLOPT_POST, 1);
