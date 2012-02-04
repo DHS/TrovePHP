@@ -34,13 +34,13 @@ class Trove {
 	const VERSION = '2.0';
 	
 	/**
-	 * Consumer Key and Consumer Secret are required here. These are your oauth credentials
+	 * Consumer Key and Consumer Secret are required here. These are your OAuth credentials
 	 * 
-	 * @param string $clientId Required, contains the oauth consumer key
-	 * @param string $clientSecret Required, contains the oauth consumer secret
+	 * @param string $clientId Required, contains the OAuth consumer key
+	 * @param string $clientSecret Required, contains the OAuth consumer secret
 	 * @param string $redirectUri Required, contains the redirectURI for your app specified in YourTrove
-	 * @param string $scope Optional, a list of content types you want.  Default is array('photos')
 	 * @param string $accessToken Optional, if you already have this authenticated 
+	 * @param string $scope Optional, a list of content types you want.  Default is array('photos')
 	 */
 	public function __construct($clientId, $clientSecret, $redirectUri, $accessToken = null, $scope = array('photos')) {
 		
@@ -53,8 +53,8 @@ class Trove {
 	}
 	
 	/**
-	 * First step of oauth2.  Gets an authenticate request that will bounce back a code that you will use
-	 * to create an Access Token
+	 * First step of OAuth2. Gets an authenticate request that will bounce back a code that you will use
+	 * to create an Access Token.
 	 * 
 	 * @return string Url that the user should be redirected to.
 	 */
@@ -68,6 +68,11 @@ class Trove {
 		
 	}
 	
+	/**
+	 * Second step of OAuth2. Generate the access token.
+	 * 
+	 * @param string $codeToken Required, the code from the first stage of OAuth
+	 */
 	public function getAccessToken($codeToken) {
 		
 		$params['client_id']		= $this->clientId;
@@ -82,6 +87,13 @@ class Trove {
 		
 	}
 	
+	/**
+	 * Performs an HTTP POST request along with the necessary OAuth information, and signature
+	 * 
+	 * @param string $url Required, the url to send the request to
+	 * @param arrray $params Optional, the params to send to the url
+	 * @return $string The body of the HTTP response
+	 */
 	function post($url, $params = array()) {
 		
 		$url = self::$rootUrl . $url;
@@ -92,11 +104,11 @@ class Trove {
 	}
 	
 	/**
-	 * performs an http get request along with the necessary oauth information, and signature
-	 *  
-	 * @param string $url
-	 * @param arrray $param
-	 * @return the body of the http response
+	 * Performs an HTTP GET request along with the necessary OAuth information, and signature
+	 * 
+	 * @param string $url Required, the url to send the request to
+	 * @param arrray $params Optional, the params to send to the url
+	 * @return $string The body of the HTTP response
 	 */
 	function get($url, $params = array()) {
 		
@@ -109,9 +121,9 @@ class Trove {
 	
 	/**
 	 * OAuth uses a different url encode scheme than php, so this function ensures compliance
-	 *
-	 * @param string $data
-	 * @return string the cleaned data
+	 * 
+	 * @param string $data Required, the data to clean
+	 * @return string The cleaned data
 	 */
 	protected static function clean($data) {
 		
@@ -123,6 +135,11 @@ class Trove {
 		
 	}
 	
+	/**
+	 * Get information about a user
+	 * 
+	 * @return array An array of user data
+	 */
 	public function getUserInformation() {
 		
 		if ($this->accessToken == null) {
@@ -137,6 +154,13 @@ class Trove {
 		
 	}
 	
+	/**
+	 * Generic function to fetch a piece of content
+	 * 
+	 * @param string $type Required, the type of content to fetch
+	 * @param arrray $query Optional, the query to send with the request
+	 * @return array An array of content data
+	 */
 	private function getContent($type, $query) {
 		
 		if ($this->accessToken == null) {
@@ -156,14 +180,32 @@ class Trove {
 		
 	}
 	
+	/**
+	 * Fetch a user's photos
+	 * 
+	 * @param arrray $query Optional, the query to send with the request
+	 * @return array An array of photo data
+	 */
 	public function getPhotos($query = null) {
 		return $this->getContent("photos", $query);
 	}
 	
+	/**
+	 * Fetch a user's checkins
+	 * 
+	 * @param arrray $query Optional, the query to send with the request
+	 * @return array An array of checkin data
+	 */
 	public function getCheckins($query = null) {
 		return $this->getContent("checkins", $query);
 	}
 	
+	/**
+	 * Fetch a user's status
+	 * 
+	 * @param arrray $query Optional, the query to send with the request
+	 * @return array An array of photo data
+	 */
 	public function getStatus($query = null) {
 		return $this->getContent("status", $query);
 	}
@@ -181,6 +223,13 @@ class AccessTokenRequiredException extends Exception {}
  */
 class HttpUtil {
 	
+	/**
+	 * Posts the parameters to the provided url
+	 * 
+	 * @param string $url Required, url to post the params to
+	 * @param array $params Required, list of parameters to post to the url
+	 * @return string The body of the HTTP response
+	 */
 	public static function createGetUrl($url, $params) {
 		
 		if (isset($params)) {
@@ -196,12 +245,12 @@ class HttpUtil {
 	}
 	
 	/**
-	 * Posts the parameters to the provided url
+	 * Send an HTTP request using a specified method to the url with params
 	 * 
-	 * @todo: remove verifypeer false
-	 * @param string $url url to post the params to
-	 * @param array $params List of key=>value parameters to post to the url
-	 * @return string the body of the http response.
+	 * @param string $method Required, the HTTP method to use
+	 * @param string $url Required, the url to post the params to
+	 * @param array $params Required, list of parameters to send to the url
+	 * @return string The body of the HTTP response
 	 */
 	public static function httpRequest($method, $url, $params) {
 		
@@ -251,8 +300,8 @@ class HttpUtil {
 	 * Builds an array out of the query string of a url
 	 * name=john&id=5 becomes array('name'=>'john', 'id'=>'5')
 	 * 
-	 * @param string $query
-	 * @return array an array representation of query
+	 * @param string $query Required, the query string to parse
+	 * @return array An array representation of the query
 	 */
 	public static function parseQuery($query) {
 		
