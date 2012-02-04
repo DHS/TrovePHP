@@ -131,7 +131,10 @@ class Trove {
 		$data = rawurlencode($data);
 		//cheating and un-doing the non-rfc compliant encoding
 		//TODO: Do this the right way?
-		return str_replace('+',' ', str_replace('%7E', '~', $data));
+		$data = str_replace('%7E', '~', $data);
+		$data = str_replace('+',' ', $data);
+		
+		return $data;
 		
 	}
 	
