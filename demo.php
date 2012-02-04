@@ -3,18 +3,22 @@
 // Create an app here: https://www.yourtrove.com/developers/applications
 
 // Then copy over these three variables
+
 $app_key			= 'app_key';
 $app_secret			= 'app_secret';
 $app_callback_url	= 'app_callback_url';
 
 // Now run this page to authorize yourself and generate an access token which you can copy in here
-$access_token		= null;
+
+$access_token = null;
 
 // Include and initialize trove
+
 include 'trove.php';
 $trove = new Trove($app_key, $app_secret, $app_callback_url, $access_token);
 
 // Have we got an access token copy and pasted in above yet? If not then authorize the user.
+
 if (!$access_token) {
 	
 	if (!$_GET['code']) {
@@ -49,7 +53,7 @@ if ($access_token) {
 	echo '<p>Now '.$user['first_name'].' let\'s try fetching some photos:</p>';
 	
 	$photos = $trove->getPhotos();
-
+	
 	//echo '<pre>';
 	//print_r($photos);
 	//echo '<pre>';

@@ -1,19 +1,19 @@
 Trove PHP library
 =================
 
-This is the PHP library for [Trove](http://www.yourtrove.com). It is licensed under the MIT license (see LICENSE). For more information and to and generate your app id and secret, visit the [Developers](http://www.yourtrove.com/developers/) section of our website.
+This is the PHP library for [Trove](http://www.yourtrove.com). It is licensed under the MIT license. For more information and to create a new app visit the [Developers](http://www.yourtrove.com/developers/) section of our website.
 
 Getting started
 ---------------
 
-See demo.php. Here's the basic flow.
+Here's the basic flow (see demo.php for a working example).
 
-First initialize Trove:
+First initialize Trove and generate an authorization url:
 
 	$trove = new Trove($app_key, $app_secret, $app_callback_url);
 	$authUrl = $trove->buildAuthUrl();
 
-Then redirect users to $authUrl. The bounceback will return a GET var called code that you can use to generate an access token:
+Then redirect users to $authUrl. The bounceback will return a GET var that can be used to generate an access token:
 
 	$access_token = $trove->getAccessToken($_GET['code']);
 
