@@ -176,6 +176,7 @@ class Trove {
 		print_r($params);
 		$response = HttpUtil::httpRequest('GET', self::$rootUrl . '/content/' . $type . '/', $params);
 		$results = json_decode($response, true);
+		
 		return $results;
 		
 	}
@@ -187,7 +188,9 @@ class Trove {
 	 * @return array An array of photo data
 	 */
 	public function getPhotos($query = null) {
+		
 		return $this->getContent('photos', $query);
+		
 	}
 	
 	/**
@@ -197,7 +200,9 @@ class Trove {
 	 * @return array An array of checkin data
 	 */
 	public function getCheckins($query = null) {
+		
 		return $this->getContent('checkins', $query);
+		
 	}
 	
 	/**
@@ -207,7 +212,9 @@ class Trove {
 	 * @return array An array of photo data
 	 */
 	public function getStatus($query = null) {
+		
 		return $this->getContent('status', $query);
+		
 	}
 	
 }
@@ -287,7 +294,7 @@ class HttpUtil {
 		
 		$page = curl_getinfo($curl);
 		
-		if ($page['http_code']!=200) {	 
+		if ($page['http_code'] != 200) {	 
 			echo($data);
 		}
 		
